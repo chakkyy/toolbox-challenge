@@ -1,8 +1,19 @@
 import React, { useState, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import { Table } from 'react-bootstrap';
 import './FileTable.css';
 
-const FileTable = ({ files }) => {
+const FileTable = () => {
+  const files = useSelector((state) => state.files);
+  const filterText = useSelector((state) => state.filter);
+
+  const filteredFiles = useMemo(() => {
+    if (!filterText) return files;
+    return files.filter((file) =>
+      file.file.toLowerCase().includes(filterText.toLowerCase())
+    );
+  }, [files, filterText]);
+
   const [sortConfig, setSortConfig] = useState({
     key: null,
     direction: 'asc',
@@ -25,7 +36,7 @@ const FileTable = ({ files }) => {
 
   const sortedRows = useMemo(() => {
     const rows = [];
-    files.forEach((file) => {
+    filteredFiles.forEach((file) => {
       file.lines.forEach((line) => {
         rows.push({
           file: file.file,
@@ -64,7 +75,7 @@ const FileTable = ({ files }) => {
     }
 
     return rows;
-  }, [files, sortConfig]);
+  }, [filteredFiles, sortConfig]);
 
   return (
     <Table striped bordered hover responsive>
@@ -72,44 +83,24 @@ const FileTable = ({ files }) => {
         <tr>
           <th
             onClick={() => handleSort('file')}
-            style={{
-              cursor: 'pointer',
-              userSelect: 'none',
-              transition: 'background-color 0.2s',
-            }}
             className="sortable-header"
           >
             File Name{getSortIcon('file')}
           </th>
           <th
             onClick={() => handleSort('text')}
-            style={{
-              cursor: 'pointer',
-              userSelect: 'none',
-              transition: 'background-color 0.2s',
-            }}
             className="sortable-header"
           >
             Text{getSortIcon('text')}
           </th>
           <th
             onClick={() => handleSort('number')}
-            style={{
-              cursor: 'pointer',
-              userSelect: 'none',
-              transition: 'background-color 0.2s',
-            }}
             className="sortable-header"
           >
             Number{getSortIcon('number')}
           </th>
           <th
             onClick={() => handleSort('hex')}
-            style={{
-              cursor: 'pointer',
-              userSelect: 'none',
-              transition: 'background-color 0.2s',
-            }}
             className="sortable-header"
           >
             Hex{getSortIcon('hex')}

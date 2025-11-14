@@ -1,16 +1,22 @@
 import React, { useState, useEffect } from 'react';
+import { Provider, useDispatch } from 'react-redux';
 import { Container, Navbar, Button } from 'react-bootstrap';
 import FileTable from './components/FileTable';
 import FileFilter from './components/FileFilter/FileFilter';
 import { mockFiles } from './data/mockData';
+import store from './redux/store';
+import { setFiles } from './redux/actions';
 
-const App = () => {
+const AppContent = () => {
+  const dispatch = useDispatch();
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem('theme') || 'light';
   });
 
-  // TODO: Migrate to Redux
-  const [filterText, setFilterText] = useState('');
+  // Initialize Redux store with mock data on mount, this will be replaced with the actual API call in a proper file on the future.
+  useEffect(() => {
+    dispatch(setFiles(mockFiles));
+  }, [dispatch]);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-bs-theme', theme);
@@ -22,16 +28,6 @@ const App = () => {
       prevTheme === 'light' ? 'dark' : 'light'
     );
   };
-
-  const handleFilter = (text) => {
-    setFilterText(text);
-  };
-
-  // Filter files by name (case-insensitive, partial match)
-  const filteredFiles = mockFiles.filter((file) => {
-    if (!filterText) return true;
-    return file.file.toLowerCase().includes(filterText.toLowerCase());
-  });
 
   return (
     <>
@@ -49,10 +45,18 @@ const App = () => {
       </Navbar>
 
       <Container>
-        <FileFilter onFilter={handleFilter} />
-        <FileTable files={filteredFiles} />
+        <FileFilter />
+        <FileTable />
       </Container>
     </>
+  );
+};
+
+const App = () => {
+  return (
+    <Provider store={store}>
+      <AppContent />
+    </Provider>
   );
 };
 
