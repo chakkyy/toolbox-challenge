@@ -1,0 +1,11 @@
+.sortable-header:hover {
+  opacity: 0.8;
+}
+
+[data-bs-theme="light"] .sortable-header:hover {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-bs-theme="dark"] .sortable-header:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}

@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Navbar, Button } from 'react-bootstrap';
 import FileTable from './components/FileTable';
+import FileFilter from './components/FileFilter/FileFilter';
 import { mockFiles } from './data/mockData';
 
 const App = () => {
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem('theme') || 'light';
   });
+
+  // TODO: Migrate to Redux
+  const [filterText, setFilterText] = useState('');
 
   useEffect(() => {
     document.documentElement.setAttribute('data-bs-theme', theme);
@@ -18,6 +22,16 @@ const App = () => {
       prevTheme === 'light' ? 'dark' : 'light'
     );
   };
+
+  const handleFilter = (text) => {
+    setFilterText(text);
+  };
+
+  // Filter files by name (case-insensitive, partial match)
+  const filteredFiles = mockFiles.filter((file) => {
+    if (!filterText) return true;
+    return file.file.toLowerCase().includes(filterText.toLowerCase());
+  });
 
   return (
     <>
@@ -35,7 +49,8 @@ const App = () => {
       </Navbar>
 
       <Container>
-        <FileTable files={mockFiles} />
+        <FileFilter onFilter={handleFilter} />
+        <FileTable files={filteredFiles} />
       </Container>
     </>
   );
