@@ -1,5 +1,8 @@
 const path = require('path');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+require('dotenv').config();
 
 module.exports = {
   mode: 'development',
@@ -42,6 +45,11 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './public/index.html',
       title: 'Toolbox Challenge',
+    }),
+    new webpack.DefinePlugin({
+      'process.env.REACT_APP_API_URL': JSON.stringify(
+        process.env.REACT_APP_API_URL || 'http://localhost:3000'
+      ),
     }),
   ],
   resolve: {
