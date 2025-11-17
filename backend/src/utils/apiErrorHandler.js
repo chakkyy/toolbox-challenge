@@ -1,5 +1,6 @@
 /**
- * Handle and format axios errors with context
+ * Handle and format axios specific errors with context
+ *
  * @param {Error} error - Axios error object
  * @param {string} context - Function or operation name for context
  * @throws {Error} Formatted error with descriptive message

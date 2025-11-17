@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { handleApiError } = require('../utils/errorHandler');
+const { handleApiError } = require('../utils/apiErrorHandler');
 
 if (!process.env.ENDPOINT) {
   throw new Error('Missing required environment variable: ENDPOINT');
