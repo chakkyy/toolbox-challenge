@@ -1,11 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { Table } from 'react-bootstrap';
+import SkeletonRow from '../SkeletonRow';
 import './FileTable.css';
 
 const FileTable = () => {
   const files = useSelector((state) => state.files);
   const filterText = useSelector((state) => state.filter);
+  const loading = useSelector((state) => state.loading);
 
   const filteredFiles = useMemo(() => {
     if (!filterText) return files;
@@ -78,54 +80,60 @@ const FileTable = () => {
   }, [filteredFiles, sortConfig]);
 
   return (
-    <Table striped bordered hover responsive>
-      <thead>
-        <tr>
-          <th
-            onClick={() => handleSort('file')}
-            className="sortable-header"
-          >
-            File Name{getSortIcon('file')}
-          </th>
-          <th
-            onClick={() => handleSort('text')}
-            className="sortable-header"
-          >
-            Text{getSortIcon('text')}
-          </th>
-          <th
-            onClick={() => handleSort('number')}
-            className="sortable-header"
-          >
-            Number{getSortIcon('number')}
-          </th>
-          <th
-            onClick={() => handleSort('hex')}
-            className="sortable-header"
-          >
-            Hex{getSortIcon('hex')}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        {sortedRows && sortedRows.length > 0 ? (
-          sortedRows.map((row, index) => (
-            <tr key={`${row.file}-${row.text}-${index}`}>
-              <td>{row.file}</td>
-              <td>{row.text}</td>
-              <td>{row.number}</td>
-              <td>{row.hex}</td>
-            </tr>
-          ))
-        ) : (
+    <div className="table-responsive table-container">
+      <Table striped bordered hover className="file-table">
+        <thead>
           <tr>
-            <td colSpan="4" className="text-center">
-              No data available
-            </td>
+            <th
+              onClick={() => handleSort('file')}
+              className="sortable-header"
+            >
+              File Name{getSortIcon('file')}
+            </th>
+            <th
+              onClick={() => handleSort('text')}
+              className="sortable-header"
+            >
+              Text{getSortIcon('text')}
+            </th>
+            <th
+              onClick={() => handleSort('number')}
+              className="sortable-header"
+            >
+              Number{getSortIcon('number')}
+            </th>
+            <th
+              onClick={() => handleSort('hex')}
+              className="sortable-header"
+            >
+              Hex{getSortIcon('hex')}
+            </th>
           </tr>
-        )}
-      </tbody>
-    </Table>
+        </thead>
+        <tbody>
+          {loading ? (
+            Array.from({ length: 5 }).map((_, index) => (
+              <SkeletonRow key={`skeleton-${index}`} />
+            ))
+          ) : sortedRows && sortedRows.length > 0 ? (
+            sortedRows.map((row, index) => (
+              <tr key={`${row.file}-${row.text}-${index}`}>
+                <td>{row.file}</td>
+                <td>{row.text}</td>
+                <td>{row.number}</td>
+                <td>{row.hex}</td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="4" className="text-center">
+                No data available
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </Table>
+    </div>
   );
 };
 

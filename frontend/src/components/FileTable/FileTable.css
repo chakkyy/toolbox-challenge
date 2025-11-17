@@ -1,3 +1,39 @@
+.table-container {
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+  overflow-x: auto;
+  position: relative;
+  border: 1px solid;
+}
+
+[data-bs-theme="light"] .table-container {
+  border-color: #dee2e6;
+}
+
+[data-bs-theme="dark"] .table-container {
+  border-color: #495057;
+}
+
+.table-container .file-table {
+  margin-bottom: 0;
+}
+
+.file-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+[data-bs-theme="light"] .file-table thead th {
+  background-color: #fff !important;
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
+}
+
+[data-bs-theme="dark"] .file-table thead th {
+  background-color: #212529 !important;
+  box-shadow: 0 2px 2px -1px rgba(255, 255, 255, 0.1);
+}
+
 .sortable-header {
   cursor: pointer;
   user-select: none;

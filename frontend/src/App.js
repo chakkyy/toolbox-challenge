@@ -3,9 +3,9 @@ import { Provider, useDispatch } from 'react-redux';
 import { Container, Navbar, Button } from 'react-bootstrap';
 import FileTable from './components/FileTable';
 import FileFilter from './components/FileFilter/FileFilter';
-import { mockFiles } from './data/mockData';
+import ErrorAlert from './components/ErrorAlert';
 import store from './redux/store';
-import { setFiles } from './redux/actions';
+import { fetchFilesAsync } from './redux/thunks';
 
 const AppContent = () => {
   const dispatch = useDispatch();
@@ -13,9 +13,9 @@ const AppContent = () => {
     return localStorage.getItem('theme') || 'light';
   });
 
-  // Initialize Redux store with mock data on mount, this will be replaced with the actual API call in a proper file on the future.
+  // Fetch files from backend API on component mount
   useEffect(() => {
-    dispatch(setFiles(mockFiles));
+    dispatch(fetchFilesAsync());
   }, [dispatch]);
 
   useEffect(() => {
@@ -45,6 +45,7 @@ const AppContent = () => {
       </Navbar>
 
       <Container>
+        <ErrorAlert />
         <FileFilter />
         <FileTable />
       </Container>
