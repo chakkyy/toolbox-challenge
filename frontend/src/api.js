@@ -79,3 +79,17 @@ export const fetchFilesByName = async (fileName) => {
     throw transformError(error);
   }
 };
+
+/**
+ * Fetches list of all available files from the backend API
+ * @returns {Promise<Object>} Promise that resolves with object containing files array
+ * @throws {Error} Throws error if request fails
+ */
+export const fetchFileList = async () => {
+  try {
+    const response = await api.get('/files/list');
+    return response.data;
+  } catch (error) {
+    throw transformError(error);
+  }
+};

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Provider, useDispatch } from 'react-redux';
-import { Container, Navbar, Button } from 'react-bootstrap';
+import { Container, Navbar, Button, Row, Col } from 'react-bootstrap';
 import FileTable from './components/FileTable';
 import FileFilter from './components/FileFilter/FileFilter';
 import ErrorAlert from './components/ErrorAlert';
+import FileDetailsModal from './components/FileDetailsModal';
+import FileList from './components/FileList';
 import store from './redux/store';
-import { fetchFilesAsync } from './redux/thunks';
+import { fetchFilesAsync, fetchFileListAsync } from './redux/thunks';
 
 const AppContent = () => {
   const dispatch = useDispatch();
@@ -13,9 +15,10 @@ const AppContent = () => {
     return localStorage.getItem('theme') || 'light';
   });
 
-  // Fetch files from backend API on component mount
+  // Fetch files and file list from backend API on component mount
   useEffect(() => {
     dispatch(fetchFilesAsync());
+    dispatch(fetchFileListAsync());
   }, [dispatch]);
 
   useEffect(() => {
@@ -46,9 +49,19 @@ const AppContent = () => {
 
       <Container>
         <ErrorAlert />
-        <FileFilter />
-        <FileTable />
+        
+        <Row>
+          <Col md={4} lg={3}>
+            <FileList />
+          </Col>
+          <Col md={8} lg={9}>
+            <FileFilter />
+            <FileTable />
+          </Col>
+        </Row>
       </Container>
+      
+      <FileDetailsModal />
     </>
   );
 };
