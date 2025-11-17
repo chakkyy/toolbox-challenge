@@ -12,3 +12,22 @@
   width: 3rem;
   height: 3rem;
 }
+
+.invalid-field {
+  background-color: #fee2e2 !important;
+  color: #991b1b !important;
+  font-weight: 500;
+  border-left: 3px solid #dc2626 !important;
+}
+
+[data-bs-theme="dark"] .invalid-field {
+  background-color: #4a1a1a !important;
+  color: #fca5a5 !important;
+  border-left-color: #ef4444 !important;
+}
+
+.invalid-field::after {
+  content: " ⚠️";
+  font-size: 0.875rem;
+  margin-left: 0.25rem;
+}

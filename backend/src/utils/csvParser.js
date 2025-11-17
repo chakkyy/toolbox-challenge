@@ -9,10 +9,13 @@
  * Parse CSV content and validate data structure
  * @param {string} csvContent - Raw CSV content as string
  * @param {string} fileName - Name of the file being parsed
+ * @param {Object} options - Parsing options
+ * @param {boolean} options.includeValidation - If true, include validation metadata and partially invalid lines
  * @returns {Object|Array} Parsed data as {file, lines: [{text, number, hex}]} or [] for empty files
  */
 
-function parseCSV(csvContent, fileName) {
+function parseCSV(csvContent, fileName, options = {}) {
+  const { includeValidation = false } = options;
   if (!csvContent || csvContent.trim() === '') {
     return [];
   }
@@ -56,27 +59,41 @@ function parseCSV(csvContent, fileName) {
     const numberStr = columns[2].trim();
     const hex = columns[3].trim();
 
-    // Skip lines with empty required fields
-    if (!text || !numberStr || !hex) {
-      continue;
-    }
+    // Validate each field (shared validation logic)
+    const textValid = text && text.trim() !== '';
+    const numberValid =
+      !isNaN(Number(numberStr)) && numberStr.trim() !== '';
+    const hexValid = hex && hex.length === 32;
 
-    // Validate number field is numeric
-    const number = Number(numberStr);
-    if (isNaN(number)) {
-      continue;
-    }
+    if (includeValidation) {
+      // Mode: Include validation metadata and partially invalid lines
 
-    // Validate hex field is exactly 32 characters
-    if (hex.length !== 32) {
-      continue;
-    }
+      if (textValid || numberValid || hexValid) {
+        validLines.push({
+          text: text || '',
+          number: numberStr || '',
+          hex: hex || '',
+          validation: {
+            textValid,
+            numberValid,
+            hexValid,
+          },
+        });
+      }
+    } else {
+      // Default mode: Only include fully valid lines (challenge requirement)
 
-    validLines.push({
-      text,
-      number,
-      hex,
-    });
+      // Skip if any field is invalid
+      if (!textValid || !numberValid || !hexValid) {
+        continue;
+      }
+
+      validLines.push({
+        text,
+        number: Number(numberStr),
+        hex,
+      });
+    }
   }
 
   if (validLines.length === 0 && startIndex > 0) {

@@ -110,10 +110,10 @@ The `src/api.js` module provides a centralized interface for backend communicati
 ```javascript
 import { fetchFiles, fetchFilesByName, fetchFileList } from './api';
 
-// Fetch all files
+// Fetch all files (only valid lines)
 const files = await fetchFiles();
 
-// Fetch specific file
+// Fetch specific file (all lines with validation metadata)
 const file = await fetchFilesByName('test1.csv');
 
 // Fetch file list
@@ -126,6 +126,39 @@ const fileList = await fetchFileList();
 - Automatic error transformation
 - Consistent error handling
 - Configurable base URL from environment
+
+### Data Quality Visualization
+
+The FileDetailsModal component displays validation status for each field:
+
+**Valid Fields**: Displayed normally
+**Invalid Fields**: Highlighted with:
+
+- Red background color
+- Warning emoji (⚠️)
+- Red border on the left
+
+**Validation Metadata** (from backend):
+
+```json
+{
+  "text": "Sample",
+  "number": "notANumber",
+  "hex": "short",
+  "validation": {
+    "textValid": true,
+    "numberValid": false,
+    "hexValid": false
+  }
+}
+```
+
+This enables users to:
+
+- See all data including partially invalid lines
+- Identify specific invalid fields
+- Review and correct data quality issues
+- Understand why certain lines were excluded from the main table
 
 ## Testing
 

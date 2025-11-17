@@ -224,11 +224,34 @@ curl "http://localhost:3000/files/data?fileName=test1.csv"
 
 **Behavior:**
 
-- Without `fileName`: Returns all files with valid data
-- With `fileName`: Returns only the specified file (or empty array if not found/error)
+- **Without `fileName`**: Returns all files with ONLY valid lines
+- **With `fileName`**: Returns specified file with ALL lines (valid + invalid) and validation metadata
 - Files with download/processing errors are excluded
 - Empty files are excluded
-- Files with no valid data rows are included (shows file exists but has no valid content)
+- Lines with wrong column count (< 4 or > 4) are always excluded
+
+**Validation Metadata (when fileName is specified):**
+
+When the `fileName` parameter is present, each line includes a `validation` object:
+
+```json
+{
+  "text": "Sample text",
+  "number": "12345",
+  "hex": "abc",
+  "validation": {
+    "textValid": true,
+    "numberValid": true,
+    "hexValid": false
+  }
+}
+```
+
+- `textValid`: true if text field is non-empty
+- `numberValid`: true if number field is a valid number
+- `hexValid`: true if hex field is exactly 32 characters
+- Invalid field values are preserved as strings for review
+- This enables the frontend to highlight invalid fields in the UI
 
 **Status Codes:**
 

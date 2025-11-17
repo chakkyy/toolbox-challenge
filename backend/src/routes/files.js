@@ -31,11 +31,27 @@ const router = express.Router();
  *                 type: string
  *                 example: "Sample text"
  *               number:
- *                 type: number
+ *                 oneOf:
+ *                   - type: number
+ *                   - type: string
  *                 example: 12345
+ *                 description: "Number if valid, string if invalid (when fileName parameter is used)"
  *               hex:
  *                 type: string
  *                 example: "a1b2c3d4e5f6"
+ *               validation:
+ *                 type: object
+ *                 description: "Validation metadata (only present when fileName parameter is used)"
+ *                 properties:
+ *                   textValid:
+ *                     type: boolean
+ *                     example: true
+ *                   numberValid:
+ *                     type: boolean
+ *                     example: true
+ *                   hexValid:
+ *                     type: boolean
+ *                     example: true
  *     ErrorResponse:
  *       type: object
  *       properties:
@@ -91,11 +107,21 @@ async function getFilesList(_req, res) {
  *     summary: Get processed CSV file data
  *     description: |
  *       Fetches and processes CSV files from the external API, returning formatted JSON data.
- *       - Without fileName parameter: Returns all files with valid data
- *       - With fileName parameter: Returns only the specified file
+ *
+ *       **Behavior:**
+ *       - **Without fileName parameter**: Returns all files with ONLY valid lines (no validation metadata)
+ *       - **With fileName parameter**: Returns specified file with ALL lines (valid + invalid) and validation metadata
+ *
+ *       **Validation Metadata:**
+ *       When fileName parameter is present, each line includes a validation object with flags:
+ *       - textValid: true if text field is non-empty
+ *       - numberValid: true if number field is a valid number
+ *       - hexValid: true if hex field is exactly 32 characters
+ *
+ *       Invalid field values are preserved as strings for review.
  *
  *       Files with download/processing errors are excluded from results.
- *       Empty files are excluded, but files with no valid data rows are included to show file state.
+ *       Lines with wrong column count (< 4 or > 4) are always excluded.
  *     tags:
  *       - Files
  *     parameters:
@@ -154,7 +180,9 @@ async function getFilesData(req, res) {
     if (fileName && fileName.trim() !== '') {
       try {
         const csvContent = await getFile(fileName);
-        const parsedData = parseCSV(csvContent, fileName);
+        const parsedData = parseCSV(csvContent, fileName, {
+          includeValidation: true,
+        });
 
         if (Array.isArray(parsedData) && parsedData.length === 0) {
           res.setHeader('Content-Type', 'application/json');

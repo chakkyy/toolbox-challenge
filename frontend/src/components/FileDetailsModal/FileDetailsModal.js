@@ -1,13 +1,9 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import {
-  Modal,
-  Button,
-  Table,
-  Spinner,
-  Alert,
-} from 'react-bootstrap';
+import { Modal, Button, Table } from 'react-bootstrap';
 import { closeModal } from '../../redux/slices/modalSlice';
+import FileLineRow from './FileLineRow';
+import { LoadingState, ErrorState, EmptyState } from './ModalStates';
 import './FileDetailsModal.css';
 
 const FileDetailsModal = () => {
@@ -16,9 +12,9 @@ const FileDetailsModal = () => {
     (state) => state.modal
   );
 
-  const handleClose = () => {
-    dispatch(closeModal());
-  };
+  const handleClose = () => dispatch(closeModal());
+
+  const hasLines = fileData?.lines?.length > 0;
 
   return (
     <Modal
@@ -35,53 +31,38 @@ const FileDetailsModal = () => {
       </Modal.Header>
 
       <Modal.Body id="file-details-modal-body">
-        {loading && (
-          <div className="text-center py-4">
-            <Spinner animation="border" role="status">
-              <span className="visually-hidden">Loading...</span>
-            </Spinner>
-            <p className="mt-2">Loading file details...</p>
-          </div>
-        )}
+        {loading && <LoadingState />}
 
         {error && !loading && (
-          <Alert
-            variant="danger"
-            dismissible
-            onClose={() => dispatch(closeModal())}
-          >
-            <Alert.Heading>Error</Alert.Heading>
-            <p>{error}</p>
-          </Alert>
+          <ErrorState error={error} onClose={handleClose} />
         )}
 
         {!loading && !error && fileData && (
           <div className="table-responsive">
-            <Table striped bordered hover>
+            <Table
+              striped
+              bordered
+              hover
+              className="file-details-table"
+            >
               <thead>
                 <tr>
                   <th>Text</th>
                   <th>Number</th>
-                  <th>Hex</th>
+                  <th>Hex (32 chars)</th>
                 </tr>
               </thead>
               <tbody>
-                {fileData.lines && fileData.lines.length > 0 ? (
+                {hasLines ? (
                   fileData.lines.map((line, index) => (
-                    <tr key={`${line.text}-${line.number}-${index}`}>
-                      <td>{line.text}</td>
-                      <td>{line.number}</td>
-                      <td>{line.hex}</td>
-                    </tr>
+                    <FileLineRow
+                      key={index}
+                      line={line}
+                      index={index}
+                    />
                   ))
                 ) : (
-                  <tr>
-                    <td colSpan="3" className="text-center">
-                      No valid lines available for this file. All data
-                      failed validation. Please review the source file
-                      manually.
-                    </td>
-                  </tr>
+                  <EmptyState lines={fileData.lines} />
                 )}
               </tbody>
             </Table>
