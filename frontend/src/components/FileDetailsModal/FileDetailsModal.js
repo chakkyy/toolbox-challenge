@@ -2,8 +2,12 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Modal, Button, Table } from 'react-bootstrap';
 import { closeModal } from '../../redux/slices/modalSlice';
-import FileLineRow from './FileLineRow';
-import { LoadingState, ErrorState, EmptyState } from './ModalStates';
+import FileLineRow from './components/FileLineRow';
+import {
+  LoadingState,
+  ErrorState,
+  EmptyState,
+} from './components/ModalStates';
 import './FileDetailsModal.css';
 
 const FileDetailsModal = () => {

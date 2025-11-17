@@ -1,114 +1,15 @@
-import React, { useState, useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import React from 'react';
 import { Table } from 'react-bootstrap';
-import SkeletonRow from '../SkeletonRow';
+import useFileData from '../../hooks/useFileData';
+import useSorting from '../../hooks/useSorting';
+import TableHeader from './components/TableHeader';
+import TableBody from './components/TableBody';
 import './FileTable.css';
 
 const FileTable = () => {
-  const files = useSelector((state) => state.files.data);
-  const filterText = useSelector((state) => state.files.filter);
-  const loading = useSelector((state) => state.files.loading);
-
-  const filteredFiles = useMemo(() => {
-    if (!filterText) return files;
-    return files.filter((file) =>
-      file.file.toLowerCase().includes(filterText.toLowerCase())
-    );
-  }, [files, filterText]);
-
-  const [sortConfig, setSortConfig] = useState({
-    key: null,
-    direction: 'asc',
-  });
-
-  const handleSort = (key) => {
-    let direction = 'asc';
-    if (sortConfig.key === key && sortConfig.direction === 'asc') {
-      direction = 'desc';
-    }
-    setSortConfig({ key, direction });
-  };
-
-  const getSortIcon = (columnKey) => {
-    if (sortConfig.key !== columnKey) {
-      return ' ⇅';
-    }
-    return sortConfig.direction === 'asc' ? ' ▲' : ' ▼';
-  };
-
-  // Flatten file data into rows and apply sorting
-  // Each file can have multiple lines, so we create one row per line
-  const sortedRows = useMemo(() => {
-    const rows = [];
-
-    // Flatten nested structure: files -> lines -> rows
-    filteredFiles.forEach((file) => {
-      file.lines.forEach((line) => {
-        rows.push({
-          file: file.file,
-          text: line.text,
-          number: line.number,
-          hex: line.hex,
-        });
-      });
-    });
-
-    // Sort if a column is selected
-    if (sortConfig.key) {
-      rows.sort((a, b) => {
-        const aVal = a[sortConfig.key];
-        const bVal = b[sortConfig.key];
-
-        // Handle numerical sorting for 'number' column
-        if (sortConfig.key === 'number') {
-          return sortConfig.direction === 'asc'
-            ? aVal - bVal
-            : bVal - aVal;
-        }
-
-        // Handle alphabetical sorting (case-insensitive) for text columns
-        const aStr = String(aVal).toLowerCase();
-        const bStr = String(bVal).toLowerCase();
-
-        if (aStr < bStr) {
-          return sortConfig.direction === 'asc' ? -1 : 1;
-        }
-        if (aStr > bStr) {
-          return sortConfig.direction === 'asc' ? 1 : -1;
-        }
-        return 0;
-      });
-    }
-
-    return rows;
-  }, [filteredFiles, sortConfig]);
-
-  const renderTableBody = () => {
-    if (loading) {
-      return Array.from({ length: 5 }).map((_, index) => (
-        <SkeletonRow key={`skeleton-${index}`} />
-      ));
-    }
-
-    if (!sortedRows || sortedRows.length === 0) {
-      return (
-        <tr>
-          <td colSpan="4" className="text-center">
-            No data available
-          </td>
-        </tr>
-      );
-    }
-
-    return sortedRows.map((row, index) => (
-      <tr key={`${row.file}-${row.text}-${index}`}>
-        <td>{row.file}</td>
-        <td>{row.text}</td>
-        <td>{row.number}</td>
-        <td>{row.hex}</td>
-      </tr>
-    ));
-  };
+  const { loading, flattenedRows } = useFileData();
+  const { handleSort, getSortIcon, sortedData } =
+    useSorting(flattenedRows);
 
   return (
     <>
@@ -120,35 +21,11 @@ const FileTable = () => {
       </div>
       <div className="table-responsive table-container">
         <Table striped bordered hover className="file-table">
-          <thead>
-            <tr>
-              <th
-                onClick={() => handleSort('file')}
-                className="sortable-header"
-              >
-                File Name{getSortIcon('file')}
-              </th>
-              <th
-                onClick={() => handleSort('text')}
-                className="sortable-header"
-              >
-                Text{getSortIcon('text')}
-              </th>
-              <th
-                onClick={() => handleSort('number')}
-                className="sortable-header"
-              >
-                Number{getSortIcon('number')}
-              </th>
-              <th
-                onClick={() => handleSort('hex')}
-                className="sortable-header"
-              >
-                Hex{getSortIcon('hex')}
-              </th>
-            </tr>
-          </thead>
-          <tbody>{renderTableBody()}</tbody>
+          <TableHeader
+            onSort={handleSort}
+            getSortIcon={getSortIcon}
+          />
+          <TableBody loading={loading} rows={sortedData} />
         </Table>
       </div>
     </>

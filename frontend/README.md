@@ -78,13 +78,24 @@ frontend/
 │   ├── App.js                      # Root component
 │   ├── config.js                   # Environment configuration
 │   ├── api.js                      # Backend API client
+│   ├── hooks/                      # Shared custom hooks
+│   │   ├── useFileData.js          # File data and filtering hook
+│   │   └── useSorting.js           # Table sorting hook
 │   ├── components/
 │   │   ├── FileTable/              # Main data table component
+│   │   │   ├── FileTable.js        # Main component
+│   │   │   └── components/         # Internal components
+│   │   │       ├── TableHeader.js
+│   │   │       └── TableBody.js
 │   │   ├── FileFilter/             # Search/filter component
 │   │   ├── FileList/               # Sidebar file list
 │   │   ├── FileDetailsModal/       # File details modal
-│   │   ├── ErrorAlert/             # Error display component
-│   │   └── SkeletonRow/            # Loading skeleton
+│   │   │   ├── FileDetailsModal.js # Main component
+│   │   │   └── components/         # Internal components
+│   │   │       ├── FileLineRow.js
+│   │   │       ├── TableCell.js
+│   │   │       └── ModalStates.js
+│   │   └── ErrorAlert/             # Error display component
 │   └── redux/
 │       ├── store.js                # Redux store configuration
 │       └── slices/
@@ -95,6 +106,12 @@ frontend/
 ├── dist/                           # Production build output
 └── webpack.config.js               # Webpack configuration
 ```
+
+**Component Organization:**
+- Main component files (e.g., `FileTable.js`) are the entry points
+- Internal/helper components are in `components/` subfolders
+- Shared custom hooks are in the `hooks/` folder
+- Each component follows single responsibility principle
 
 ### State Management Patterns
 
