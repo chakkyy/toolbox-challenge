@@ -50,7 +50,6 @@ const AppContent = () => {
 
       <Container>
         <ErrorAlert />
-        
         <Row>
           <Col md={4} lg={3}>
             <FileList />
@@ -61,7 +60,6 @@ const AppContent = () => {
           </Col>
         </Row>
       </Container>
-      
       <FileDetailsModal />
     </>
   );

@@ -36,8 +36,12 @@ const FileTable = () => {
     return sortConfig.direction === 'asc' ? ' ▲' : ' ▼';
   };
 
+  // Flatten file data into rows and apply sorting
+  // Each file can have multiple lines, so we create one row per line
   const sortedRows = useMemo(() => {
     const rows = [];
+
+    // Flatten nested structure: files -> lines -> rows
     filteredFiles.forEach((file) => {
       file.lines.forEach((line) => {
         rows.push({
@@ -79,6 +83,33 @@ const FileTable = () => {
     return rows;
   }, [filteredFiles, sortConfig]);
 
+  const renderTableBody = () => {
+    if (loading) {
+      return Array.from({ length: 5 }).map((_, index) => (
+        <SkeletonRow key={`skeleton-${index}`} />
+      ));
+    }
+
+    if (!sortedRows || sortedRows.length === 0) {
+      return (
+        <tr>
+          <td colSpan="4" className="text-center">
+            No data available
+          </td>
+        </tr>
+      );
+    }
+
+    return sortedRows.map((row, index) => (
+      <tr key={`${row.file}-${row.text}-${index}`}>
+        <td>{row.file}</td>
+        <td>{row.text}</td>
+        <td>{row.number}</td>
+        <td>{row.hex}</td>
+      </tr>
+    ));
+  };
+
   return (
     <>
       <div className="d-flex justify-content-between align-items-center mb-2">
@@ -89,58 +120,37 @@ const FileTable = () => {
       </div>
       <div className="table-responsive table-container">
         <Table striped bordered hover className="file-table">
-        <thead>
-          <tr>
-            <th
-              onClick={() => handleSort('file')}
-              className="sortable-header"
-            >
-              File Name{getSortIcon('file')}
-            </th>
-            <th
-              onClick={() => handleSort('text')}
-              className="sortable-header"
-            >
-              Text{getSortIcon('text')}
-            </th>
-            <th
-              onClick={() => handleSort('number')}
-              className="sortable-header"
-            >
-              Number{getSortIcon('number')}
-            </th>
-            <th
-              onClick={() => handleSort('hex')}
-              className="sortable-header"
-            >
-              Hex{getSortIcon('hex')}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {loading ? (
-            Array.from({ length: 5 }).map((_, index) => (
-              <SkeletonRow key={`skeleton-${index}`} />
-            ))
-          ) : sortedRows && sortedRows.length > 0 ? (
-            sortedRows.map((row, index) => (
-              <tr key={`${row.file}-${row.text}-${index}`}>
-                <td>{row.file}</td>
-                <td>{row.text}</td>
-                <td>{row.number}</td>
-                <td>{row.hex}</td>
-              </tr>
-            ))
-          ) : (
+          <thead>
             <tr>
-              <td colSpan="4" className="text-center">
-                No data available
-              </td>
+              <th
+                onClick={() => handleSort('file')}
+                className="sortable-header"
+              >
+                File Name{getSortIcon('file')}
+              </th>
+              <th
+                onClick={() => handleSort('text')}
+                className="sortable-header"
+              >
+                Text{getSortIcon('text')}
+              </th>
+              <th
+                onClick={() => handleSort('number')}
+                className="sortable-header"
+              >
+                Number{getSortIcon('number')}
+              </th>
+              <th
+                onClick={() => handleSort('hex')}
+                className="sortable-header"
+              >
+                Hex{getSortIcon('hex')}
+              </th>
             </tr>
-          )}
-        </tbody>
-      </Table>
-    </div>
+          </thead>
+          <tbody>{renderTableBody()}</tbody>
+        </Table>
+      </div>
     </>
   );
 };

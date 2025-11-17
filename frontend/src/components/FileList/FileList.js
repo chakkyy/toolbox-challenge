@@ -1,11 +1,10 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   Card,
   ListGroup,
   Badge,
   Spinner,
-  Alert,
 } from 'react-bootstrap';
 import { openModal, fetchFileForModal } from '../../redux/slices/modalSlice';
 import './FileList.css';

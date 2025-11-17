@@ -9,7 +9,7 @@ export const fetchFileForModal = createAsyncThunk(
   'modal/fetchFileForModal',
   async (fileName) => {
     const data = await fetchFilesByName(fileName);
-    
+
     if (data && data.length > 0) {
       return data[0];
     } else {
@@ -54,7 +54,9 @@ const modalSlice = createSlice({
       })
       .addCase(fetchFileForModal.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || 'Failed to fetch file details. Please try again.';
+        state.error =
+          action.error.message ||
+          'Failed to fetch file details. Please try again.';
       });
   },
 });

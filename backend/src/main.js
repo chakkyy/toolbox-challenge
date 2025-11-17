@@ -31,12 +31,10 @@ app.use((_req, res) => {
     .json({ success: false, message: 'Resource not found' });
 });
 
-// Start server
-const PORT = process.env.PORT || 3000;
-const DOMAIN = process.env.DOMAIN || 'localhost';
-
-app.listen(PORT, () => {
-  console.log(`> Server started at: http://${DOMAIN}:${PORT}/`);
-});
+// Start server only if this file is run directly (not imported for testing)
+if (require.main === module) {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT);
+}
 
 module.exports = app;

@@ -8,7 +8,7 @@ export const fetchFileListAsync = createAsyncThunk(
   'fileList/fetchFileList',
   async () => {
     const data = await fetchFileList();
-    
+
     if (data && data.files) {
       return data.files;
     } else {
@@ -37,7 +37,9 @@ const fileListSlice = createSlice({
       })
       .addCase(fetchFileListAsync.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || 'Failed to fetch file list. Please try again.';
+        state.error =
+          action.error.message ||
+          'Failed to fetch file list. Please try again.';
         state.files = [];
       });
   },

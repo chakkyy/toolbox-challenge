@@ -79,16 +79,14 @@ async function getFilesData(req, res) {
 
     const results = await Promise.all(filePromises);
 
-    // Filter out failed files but keep files with empty lines arrays
+    // Filter results to handle different file states:
+    // - null: file download/processing failed (exclude)
+    // - []: completely empty file (exclude)
+    // - {file, lines: []}: file exists but no valid data (include to show file state)
+    // - {file, lines: [...]}: file with valid data (include)
     const filteredResults = results.filter((result) => {
-      // Remove null values (failed downloads/processing)
       if (result === null) return false;
-
-      // Remove empty arrays (completely empty files from parser)
       if (Array.isArray(result) && result.length === 0) return false;
-
-      // Keep objects with file and lines properties (even if lines is empty)
-      // This shows that the file exists but has no valid data
       return true;
     });
 

@@ -40,14 +40,18 @@ function parseCSV(csvContent, fileName) {
     startIndex = 1;
   }
 
+  // Process each line and validate according to CSV format requirements
+  // Expected format: file,text,number,hex (4 columns)
   for (let i = startIndex; i < lines.length; i++) {
     const line = lines[i];
     const columns = line.split(',');
 
+    // Validate column count (must be exactly 4)
     if (columns.length !== 4) {
-      continue; // Skip line with invalid column count
+      continue;
     }
 
+    // Extract columns (skip column[0] which is the filename)
     const text = columns[1].trim();
     const numberStr = columns[2].trim();
     const hex = columns[3].trim();
@@ -57,13 +61,13 @@ function parseCSV(csvContent, fileName) {
       continue;
     }
 
+    // Validate number field is numeric
     const number = Number(numberStr);
-
     if (isNaN(number)) {
-      continue; // Skip line with invalid number
+      continue;
     }
 
-    // Validate hex format (should be 32 characters) and skip line with invalid hex
+    // Validate hex field is exactly 32 characters
     if (hex.length !== 32) {
       continue;
     }
