@@ -7,7 +7,8 @@ import ErrorAlert from './components/ErrorAlert';
 import FileDetailsModal from './components/FileDetailsModal';
 import FileList from './components/FileList';
 import store from './redux/store';
-import { fetchFilesAsync, fetchFileListAsync } from './redux/thunks';
+import { fetchFilesAsync } from './redux/slices/filesSlice';
+import { fetchFileListAsync } from './redux/slices/fileListSlice';
 
 const AppContent = () => {
   const dispatch = useDispatch();

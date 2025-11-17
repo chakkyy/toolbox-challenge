@@ -5,9 +5,9 @@ import SkeletonRow from '../SkeletonRow';
 import './FileTable.css';
 
 const FileTable = () => {
-  const files = useSelector((state) => state.files);
-  const filterText = useSelector((state) => state.filter);
-  const loading = useSelector((state) => state.loading);
+  const files = useSelector((state) => state.files.data);
+  const filterText = useSelector((state) => state.files.filter);
+  const loading = useSelector((state) => state.files.loading);
 
   const filteredFiles = useMemo(() => {
     if (!filterText) return files;

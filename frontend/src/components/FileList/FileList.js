@@ -7,8 +7,7 @@ import {
   Spinner,
   Alert,
 } from 'react-bootstrap';
-import { openModal } from '../../redux/actions';
-import { fetchFileForModal } from '../../redux/thunks';
+import { openModal, fetchFileForModal } from '../../redux/slices/modalSlice';
 import './FileList.css';
 
 const FileList = () => {

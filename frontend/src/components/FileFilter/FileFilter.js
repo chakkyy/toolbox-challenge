@@ -1,11 +1,11 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Form, Row, Col } from 'react-bootstrap';
-import { setFilter } from '../../redux/actions';
+import { setFilter } from '../../redux/slices/filesSlice';
 
 const FileFilter = () => {
   const dispatch = useDispatch();
-  const filterText = useSelector((state) => state.filter);
+  const filterText = useSelector((state) => state.files.filter);
 
   const handleChange = (e) => {
     dispatch(setFilter(e.target.value));

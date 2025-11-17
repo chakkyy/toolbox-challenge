@@ -7,7 +7,7 @@ import {
   Spinner,
   Alert,
 } from 'react-bootstrap';
-import { closeModal } from '../../redux/actions';
+import { closeModal } from '../../redux/slices/modalSlice';
 import './FileDetailsModal.css';
 
 const FileDetailsModal = () => {

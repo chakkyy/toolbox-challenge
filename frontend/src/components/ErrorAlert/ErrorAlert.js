@@ -1,11 +1,11 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Alert } from 'react-bootstrap';
-import { clearError } from '../../redux/actions';
+import { clearError } from '../../redux/slices/filesSlice';
 
 const ErrorAlert = () => {
   const dispatch = useDispatch();
-  const error = useSelector((state) => state.error);
+  const error = useSelector((state) => state.files.error);
 
   if (!error) {
     return null;
