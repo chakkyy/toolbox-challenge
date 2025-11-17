@@ -48,14 +48,24 @@ function parseCSV(csvContent, fileName) {
       continue; // Skip line with invalid column count
     }
 
-    const text = columns[1];
-    const numberStr = columns[2];
-    const hex = columns[3];
+    const text = columns[1].trim();
+    const numberStr = columns[2].trim();
+    const hex = columns[3].trim();
+
+    // Skip lines with empty required fields
+    if (!text || !numberStr || !hex) {
+      continue;
+    }
 
     const number = Number(numberStr);
 
     if (isNaN(number)) {
       continue; // Skip line with invalid number
+    }
+
+    // Validate hex format (should be 32 characters) and skip line with invalid hex
+    if (hex.length !== 32) {
+      continue;
     }
 
     validLines.push({
