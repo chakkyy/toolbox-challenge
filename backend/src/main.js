@@ -1,6 +1,7 @@
 const express = require('express');
 require('dotenv/config');
 const cors = require('cors');
+const filesRoutes = require('./routes/files');
 
 const app = express();
 
@@ -19,6 +20,9 @@ app.use(express.json());
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });
 });
+
+// Files routes
+app.use('/files', filesRoutes);
 
 // 404 handler
 app.use((_req, res) => {
