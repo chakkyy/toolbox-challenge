@@ -1,0 +1,36 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: toolbox-backend
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./backend/.env
+    restart: unless-stopped
+    labels:
+      - "com.toolbox.description=Backend API service for Toolbox Challenge"
+      - "com.toolbox.service=backend"
+    networks:
+      - toolbox-network
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: toolbox-frontend
+    ports:
+      - "4000:4000"
+    env_file:
+      - ./frontend/.env
+    restart: unless-stopped
+    depends_on:
+      - backend
+    labels:
+      - "com.toolbox.description=Frontend React application for Toolbox Challenge"
+      - "com.toolbox.service=frontend"
+    networks:
+      - toolbox-network
+
+networks:
+  toolbox-network:
+    driver: bridge
